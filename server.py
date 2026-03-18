@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/')
+def home():
+    return "Backend is running!"
 
 @app.route('/api/convert')
 def convert():
@@ -13,9 +17,7 @@ def convert():
         hasil = value * 2.2
     else:
         hasil = value * 0.45
-
     return jsonify({"lbs": hasil})
 
 if __name__ == '__main__':
     app.run()
-
