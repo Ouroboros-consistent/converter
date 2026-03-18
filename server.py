@@ -17,5 +17,4 @@ def convert():
     return jsonify({"lbs": hasil})
 
 
-app.run(debug=True)
 
