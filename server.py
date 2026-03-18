@@ -16,5 +16,6 @@ def convert():
 
     return jsonify({"lbs": hasil})
 
-
+if __name__ == '__main__':
+    app.run()
 
