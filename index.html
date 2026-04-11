@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WeightShift — KG ↔ LBS</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #1a1a1a;
+        color: #e0e0e0;
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .card {
+        background: #242424;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        color: #f0f0f0;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+        color: #888;
+        margin-bottom: 1.5rem;
+      }
+
+      .field-group {
+        margin-bottom: 1rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 0.3rem;
+      }
+
+      .input-wrap {
+        display: flex;
+        align-items: center;
+        border: 1px solid #3a3a3a;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      input[type="number"] {
+        flex: 1;
+        padding: 0.6rem 0.75rem;
+        font-size: 1.1rem;
+        border: none;
+        outline: none;
+        background: #2e2e2e;
+        color: #e0e0e0;
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+
+      input[type="number"]:focus {
+        background: #333;
+      }
+
+      input[type="number"].readonly {
+        background: #2a2a2a;
+        color: #aaa;
+        cursor: default;
+      }
+
+      .unit {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.8rem;
+        color: #666;
+        background: #222;
+        border-left: 1px solid #3a3a3a;
+      }
+
+      .divider {
+        text-align: center;
+        color: #555;
+        margin: 0.5rem 0;
+        font-size: 1rem;
+      }
+
+      .clear-btn {
+        margin-top: 1rem;
+        width: 100%;
+        padding: 0.6rem;
+        background: #2e2e2e;
+        border: 1px solid #3a3a3a;
+        border-radius: 4px;
+        color: #888;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .clear-btn:hover {
+        background: #333;
+        color: #bbb;
+      }
+
+      .footer {
+        margin-top: 1.5rem;
+        font-size: 0.7rem;
+        color: #444;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>WeightShift</h1>
+      <p class="subtitle">Konversi berat — Kilogram ke Pounds</p>
+
+      <div class="field-group">
+        <label>Kilogram (KG)</label>
+        <div class="input-wrap">
+          <input
+            type="number"
+            id="kg-input"
+            placeholder="0.00"
+            min="0"
+            step="any"
+            autocomplete="off"
+          />
+          <span class="unit">KG</span>
+        </div>
+      </div>
+
+      <div class="divider">↓</div>
+
+      <div class="field-group">
+        <label>Pounds (LBS)</label>
+        <div class="input-wrap">
+          <input
+            type="number"
+            id="lbs-output"
+            class="readonly"
+            placeholder="0.00"
+            readonly
+          />
+          <span class="unit">LBS</span>
+        </div>
+      </div>
+
+      <button class="clear-btn" id="clear-btn">Reset</button>
+    </div>
+
+    <p class="footer">
+      1 KG = 2.20462 LBS &nbsp;·&nbsp; frontend by Claude &nbsp;·&nbsp; backend
+      by Ouroboros
+    </p>
+
+    <script>
+      const kgInput = document.getElementById("kg-input");
+      const lbsOutput = document.getElementById("lbs-output");
+      const clearBtn = document.getElementById("clear-btn");
+
+      async function convertKgToLbs(kg) {
+        const res = await fetch(`/api/convert?kg=${kg}&metric=kg`);
+        const data = await res.json();
+        return data.lbs;
+      }
+
+      async function handleInput() {
+        const val = parseFloat(kgInput.value);
+        if (isNaN(val) || kgInput.value === "") {
+          lbsOutput.value = "";
+          return;
+        }
+        const result = await convertKgToLbs(val);
+        lbsOutput.value = result.toFixed(4);
+      }
+
+      kgInput.addEventListener("input", handleInput);
+
+      clearBtn.addEventListener("click", () => {
+        kgInput.value = "";
+        lbsOutput.value = "";
+        kgInput.focus();
+      });
+    </script>
+  </body>
+</html>
